@@ -13,7 +13,6 @@ Este projeto é uma API de lista de tarefas (Todo List App) desenvolvida com Nod
 
 - Listagem de todos os todos.
 - Criação de tarefa via endpoint POST.
-- Atualização de status de tarefa via endpoint PUT.
 - Edição de tarefas em andamento via endpoint PUT
 - Filtros de visualização na interface (todos, apenas não concluídos, apenas concluídos).
 
