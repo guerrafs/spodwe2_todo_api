@@ -1,5 +1,6 @@
 let todos = [];
 let filter = "all";
+let editingTodoId = null; 
 
 async function fetchTodos() {
   const response = await fetch("/todos");
@@ -22,6 +23,14 @@ async function updateTodoStatus(id, done) {
   });
 }
 
+async function updateTodoText(id, newText) {
+  await fetch(`/todos/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text: newText })
+  });
+}
+
 async function renderTodos() {
   await fetchTodos();
   const todoListUl = document.getElementById("todo-list");
@@ -34,6 +43,14 @@ async function renderTodos() {
     todoItemLi.textContent = todo.text;
 
     if (!todo.done) {
+      const editButton = document.createElement("button");
+      editButton.textContent = "Editar";
+      editButton.onclick = function () {
+        document.getElementById("new-todo").value = todo.text;
+        editingTodoId = todo.id;
+      };
+      todoItemLi.appendChild(editButton);
+
       const markTodoAsDoneButton = document.createElement("button");
       markTodoAsDoneButton.textContent = "Concluir";
       markTodoAsDoneButton.onclick = async function () {
@@ -53,7 +70,12 @@ document.getElementById("new-todo").addEventListener("keypress", async function 
     const newTodoInput = document.getElementById("new-todo");
     const todoText = newTodoInput.value.trim();
     if (todoText === "") return;
-    await createTodo(todoText);
+    if (editingTodoId) {
+      await updateTodoText(editingTodoId, todoText);
+      editingTodoId = null;
+    } else {
+      await createTodo(todoText);
+    }
     newTodoInput.value = "";
     renderTodos();
   }
